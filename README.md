@@ -7,3 +7,11 @@
 This extension aims to simplify the workflow when working with Nuxt from within VS Code
 
 <a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+
+<!-- COMMANDS_START -->
+## Commands (1)
+
+|Command|Description|
+|-|-|
+|Nuxt.startDevServer|Nuxt: Start Dev Server|
+<!-- COMMANDS_END -->
