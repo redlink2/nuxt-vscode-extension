@@ -1,0 +1,30 @@
+name: Publish Extension
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-webview:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - name: Build Extension
+        run: |
+         yarn install
+         yarn build:prod
+      - name: Publish Extension on VS Code Marketplace
+        uses: lannonbr/vsce-action@master
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      - name: Publish Extension on VSX Registry
+        env:
+          VSX_TOKEN: ${{ secrets.VSX_TOKEN }}
+        run: npx ovsx publish -p $VSX_TOKEN
