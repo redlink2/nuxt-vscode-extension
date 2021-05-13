@@ -2,6 +2,7 @@
   "name": "nuxt-vscode-extension",
   "displayName": "Nuxt",
   "publisher": "allanoricil",
+  "description": "This extension aims to simplify the workflow when working with Nuxt from within VS Code",
   "preview": true,
   "author": {
     "name": "Allan Oricil",
@@ -23,7 +24,10 @@
   "categories": [
     "Other"
   ],
-  "keywords": [],
+  "keywords": [
+    "nuxt",
+    "vue"
+  ],
   "activationEvents": [
     "workspaceContains:nuxt.config.js"
   ],
