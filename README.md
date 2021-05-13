@@ -1,15 +1,9 @@
-# Instructions
+# Nuxt
 
-1 - on the root of the project, run `yarn install` and `yarn dev`
+<p><a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.nuxt" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/version/allanoricil.nuxt.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=VERSION" alt="Version"></a>
+<a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.nuxt" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/downloads/allanoricil.nuxt.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=DOWNLOADS" alt="Downloads"></a>
+<a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.nuxt" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/rating-star/allanoricil.nuxt.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=RATING" alt="Ratings"></a></p>
 
-2 - on the app dir, run `yarn install`, `yarn build:vscode` and `yarn generate:vscode` to build the app.js
+This extension aims to simplify the workflow when working with Nuxt from within VS Code
 
-3 - then go to Debug on VS Code and click on the play button
-
-4 - When vscode start, create a file called `anything.cls`, open it, then on the right top hand corner click on the `Database Icon` to open the webview.
-
-5 - open the inspector for webview and verify that the request to `http://localhost:5000/vscode/fingerprint` does not work. On my machine it took 5.2min for the request to timeout.
-
-6 - with the extension still running, open your browser and paste this in the search `http://localhost:5000/vscode/fingerprint` and verify that the server returns your machine's fingerprint.
-
-7 - conclude that with VS Code 1.56.0 webviews are not able to request a localhost server anymore. On V 1.55.2 it was possible.
+<a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
