@@ -8,6 +8,17 @@ This extension aims to simplify the workflow when working with Nuxt from within 
 
 <a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
+## Features
+
+- Start the dev server clicking on the button "Start Dev" available in the status bar
+
+<img src="https://drive.google.com/uc?id=1yhkQn3ZvMSDn3ELaDdpgPTtsHyEY_-Fq"></img>
+
+- Open the App clicking on the button "Open App" available in the status bar
+
+<img src="https://drive.google.com/uc?id=1oD9cnv3nw5AcyJwQoscEAJsrzPj_dgeE"></img>
+
+
 <!-- COMMANDS_START -->
 ## Commands (1)
 
