@@ -1,0 +1,72 @@
+{
+  "name": "nuxt-vscode-extension",
+  "displayName": "Nuxt",
+  "publisher": "allanoricil",
+  "preview": true,
+  "author": {
+    "name": "Allan Oricil",
+    "email": "allanoricilcos@outlook.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AllanOricil/nuxt-vscode-extension.git"
+  },
+  "icon": ".images/icon.png",
+  "galleryBanner": {
+    "color": "#232323",
+    "theme": "dark"
+  },
+  "version": "0.0.0",
+  "engines": {
+    "vscode": "^1.48.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [],
+  "activationEvents": [
+    "workspaceContains:nuxt.config.js"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "Nuxt.startDevServer",
+        "title": "Nuxt: Start Dev Server",
+        "icon": {
+          "light": "/.images/database_light.svg",
+          "dark": "/.images/database_dark.svg"
+        }
+      }
+    ],
+    "menus": {},
+    "configuration": {}
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
+    "test": "node ./node_modules/vscode/bin/test",
+    "build": "node .build/build.js",
+    "build:prod": "cross-env NODE_ENV=production webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^10.12.21",
+    "babel-loader": "^8.2.2",
+    "clean-webpack-plugin": "^3.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv-webpack": "^4.0.0",
+    "eslint": "^5.13.0",
+    "javascript-obfuscator": "^2.10.3",
+    "nodemon": "^2.0.7",
+    "terser-webpack-plugin": "^4.2.3",
+    "typescript": "^3.3.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-obfuscator": "^2.6.0"
+  },
+  "dependencies": {
+    "@types/vscode": "^1.56.0",
+    "has-yarn": "^2.1.0",
+    "open": "^8.0.8"
+  }
+}
