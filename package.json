@@ -11,9 +11,9 @@
     "type": "git",
     "url": "https://github.com/AllanOricil/nuxt-vscode-extension.git"
   },
-  "icon": ".images/icon.png",
+  "icon": "assets/icon.png",
   "galleryBanner": {
-    "color": "#232323",
+    "color": "#2F495E",
     "theme": "dark"
   },
   "version": "0.0.0",
@@ -32,11 +32,7 @@
     "commands": [
       {
         "command": "Nuxt.startDevServer",
-        "title": "Nuxt: Start Dev Server",
-        "icon": {
-          "light": "/.images/database_light.svg",
-          "dark": "/.images/database_dark.svg"
-        }
+        "title": "Nuxt: Start Dev Server"
       }
     ],
     "menus": {},
