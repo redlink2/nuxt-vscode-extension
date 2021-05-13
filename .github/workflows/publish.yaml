@@ -24,7 +24,7 @@ jobs:
           args: "publish -p $VSCE_TOKEN"
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
-      - name: Publish Extension on VSX Registry
+      - name: Publish Extension on the VSX Registry
         env:
           VSX_TOKEN: ${{ secrets.VSX_TOKEN }}
         run: npx ovsx publish -p $VSX_TOKEN
