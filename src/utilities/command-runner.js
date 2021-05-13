@@ -10,19 +10,19 @@ class CommandRunner {
     }
 
     exec(command, options, callback){
-        const spawnedCommand = exec(command, { ...options, cwd: this._cwd }, (error, stdout, stderr) => callback(error, stdout, stderr));
+        const execCommand = exec(command, { ...options, cwd: this._cwd }, (error, stdout, stderr) => callback(error, stdout, stderr));
 
-        spawnedCommand.stdout.on('data', data => {
+        execCommand.stdout.on('data', data => {
             console.log(data);
             this._outputChannel.append(data);
         });
 
-        spawnedCommand.stderr.on('data', data => {
+        execCommand.stderr.on('data', data => {
             console.log(data);
             this._outputChannel.append(data);
         });
 
-        spawnedCommand.on('close', code => {
+        execCommand.on('close', code => {
             console.log(code);
             this._outputChannel.append(`exited with code ${code}`);
         });

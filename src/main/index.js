@@ -18,7 +18,7 @@ const activate = async (context) => {
   nuxtOutputChannel.activate(context);
 
   statusBarButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-	statusBarButton.command = 'Nuxt.startDevServer';
+  statusBarButton.command = 'Nuxt.startDevServer';
   statusBarButton.text = MESSAGES.statusBarButton.startDev.text;
   statusBarButton.tooltip = MESSAGES.statusBarButton.startDev.tooltip;
   statusBarButton.show();
