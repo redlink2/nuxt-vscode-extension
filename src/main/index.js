@@ -4,9 +4,11 @@ const hasYarn = require('has-yarn');
 const open = require('open');
 const CommandRunner = require('../utilities/command-runner');
 const OutputChannel = require('../utilities/output-channel');
+const PreviewAppWebview = require('./preview-app-webview');
 
 const nuxtOutputChannel = new OutputChannel('Nuxt');
 const commandRunner = new CommandRunner(nuxtOutputChannel);
+const previewAppWebview = new PreviewAppWebview('App', 'Nuxt.openApp');
 
 //stores the workspace the user currently has open.
 const WORKSPACE_CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
@@ -16,6 +18,7 @@ const MESSAGES = require('../../assets/messages.json')
 
 const activate = async (context) => {
   nuxtOutputChannel.activate(context);
+  previewAppWebview.activate(context);
 
   statusBarButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
   statusBarButton.command = 'Nuxt.startDevServer';
@@ -26,7 +29,11 @@ const activate = async (context) => {
   context.subscriptions.push(vscode.commands.registerCommand('Nuxt.startDevServer', () => {
     if(statusBarButton.text === MESSAGES.statusBarButton.open.text){
       //need to find a way to get nuxt's current port because some users dont use this one
-      open('http://localhost:3000');
+      if(vscode.workspace.getConfiguration('nuxt').get('openInTheBrowser')){
+        open(`http://localhost:3000`);
+      }else{
+        vscode.commands.executeCommand("Nuxt.openApp");
+      }
     }else if(statusBarButton.text === MESSAGES.statusBarButton.startDev.text){
       commandRunner.exec(hasYarn(WORKSPACE_CWD) ? 'yarn dev' : 'npm run dev');
       statusBarButton.text = MESSAGES.statusBarButton.open.text;
@@ -40,7 +47,9 @@ const activate = async (context) => {
 	context.subscriptions.push(statusBarButton);
 };
 
-const deactivate = () => {};
+const deactivate = () => {
+  previewAppWebview.deactivate();
+};
 
 module.exports = {
   activate,
