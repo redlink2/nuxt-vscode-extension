@@ -1,0 +1,11 @@
+{
+	"statusBarButtons.startDevServer.text": "Start Dev",
+	"statusBarButtons.startDevServer.tooltip": "It starts nuxt's dev server",
+	"statusBarButtons.openApp.text": "Open App",
+	"statusBarButtons.openApp.tooltip": "It opens the app in your default browser.",
+	"statusBarButtons.setPortNumber.tooltip": "Click to choose the default Port that the Nuxt App will be served at",
+	"inputBoxes.setPortNumber.prompt": "Choose the Default Port that the Nuxt App will be served at",
+	"inputBoxes.setPortNumber.placeHolder": "type in a valid Port Number",
+    "errors.portNumberIsNotValid" : "Port Number is not Valid",
+    "errors.portNumberIsNotAvailable" : "Port Number is not Available"
+}

@@ -1,0 +1,11 @@
+{
+    "statusBarButtons.startDevServer.text": "Iniciar Dev",
+	"statusBarButtons.startDevServer.tooltip": "Inicia o aplicativo em modo de Desenvolvimento",
+	"statusBarButtons.openApp.text": "Abrir App",
+	"statusBarButtons.openApp.tooltip": "Abre o aplicativo no Navegador Padrão",
+	"statusBarButtons.setPortNumber.tooltip": "Clique para selecionar a Porta em que o aplicativo irá executar",
+    "inputBoxes.setPortNumber.prompt" :"Escolha a Porta padrão em que o aplicativo irá executar",
+    "inputBoxes.setPortNumber.placeHolder" : "Digite um número de Porta válido",
+    "errors.portNumberIsNotValid" : "A Porta não é válida",
+    "errors.portNumberIsNotAvailable" : "A Porta não está disponível"
+}

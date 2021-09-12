@@ -17,8 +17,9 @@
     "color": "#2F495E",
     "theme": "dark"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "engines": {
+    "node": "12.22.0",
     "vscode": "^1.48.0"
   },
   "categories": [
@@ -83,6 +84,7 @@
   "dependencies": {
     "@types/vscode": "^1.56.0",
     "has-yarn": "^2.1.0",
+    "i18n": "^0.13.3",
     "tcp-port-used": "^1.0.2"
   }
 }

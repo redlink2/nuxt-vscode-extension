@@ -2,36 +2,40 @@
 const vscode = require('vscode');
 const hasYarn = require('has-yarn');
 const tcpPortUsed = require('tcp-port-used');
+const path = require('path');
+const { I18n } = require('i18n');
 
 //stores the workspace the user is currently working on
 const WORKSPACE_CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
-//stores texts for the vscode ui components. We can apply i18n later.
-const MESSAGES = require('../../assets/messages.json')
-let terminal;
-
 //this will dispose any Nuxt terminals that were opened and not closed before closing vscode
 vscode.window.terminals.filter((terminal) => terminal.name === 'Nuxt').forEach((terminal) => terminal.dispose());
+let terminal;
 
 const activate = async (context) => {
+  const i18n = new I18n({
+    locales: ['en', 'pt-BR'],
+    directory: path.join(context.extensionPath, 'assets', 'locales'),
+    defaultLocale: vscode.env.language
+  })
 
-  startDevServerButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+  startDevServerButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 136);
   startDevServerButton.command = 'Nuxt.startDevServer';
-  startDevServerButton.text = `$(notebook-execute) ${MESSAGES.statusBarButtons.startDevServer.text}`;
-  startDevServerButton.tooltip = MESSAGES.statusBarButtons.startDevServer.tooltip;
+  startDevServerButton.text = `$(notebook-execute) ${i18n.__('statusBarButtons.startDevServer.text')}`;
+  startDevServerButton.tooltip = i18n.__('statusBarButtons.startDevServer.tooltip');
   context.subscriptions.push(startDevServerButton);
   startDevServerButton.show();
 
-  openAppButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+  openAppButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 136);
   openAppButton.command = 'Nuxt.openApp';
-  openAppButton.text = `$(default-view-icon) ${MESSAGES.statusBarButtons.openApp.text}`;
-  openAppButton.tooltip = MESSAGES.statusBarButtons.openApp.tooltip;
+  openAppButton.text = `$(default-view-icon) ${i18n.__('statusBarButtons.openApp.text')}`;
+  openAppButton.tooltip = i18n.__('statusBarButtons.openApp.tooltip');
   context.subscriptions.push(openAppButton);
 
-  setPortNumberButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
+  setPortNumberButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 135);
   setPortNumberButton.command = 'Nuxt.setPortNumber';
   setPortNumberButton.text = `$(ports-open-browser-icon) ${getAppPort()}`;
-  setPortNumberButton.tooltip = MESSAGES.statusBarButtons.setPortNumber.tooltip;
+  setPortNumberButton.tooltip = i18n.__('statusBarButtons.setPortNumber.tooltip');
   context.subscriptions.push(setPortNumberButton);
   setPortNumberButton.show();
 
@@ -94,11 +98,11 @@ const activate = async (context) => {
   context.subscriptions.push(
     vscode.commands.registerCommand('Nuxt.setPortNumber', () => {
       vscode.window.showInputBox({
-        prompt: MESSAGES.inputBoxes.setPortNumber.prompt,
-        placeHolder: MESSAGES.inputBoxes.setPortNumber.placeHolder
+        prompt: i18n.__('inputBoxes.setPortNumber.prompt'),
+        placeHolder: i18n.__('inputBoxes.setPortNumber.placeHolder')
       })
       .then((value) => {
-        if(isValidPortNumber(value)){
+        if(isPortNumberValid(value)){
           tcpPortUsed.check(parseInt(value))
           .then(
             (inUse) => {
@@ -108,7 +112,7 @@ const activate = async (context) => {
                   setPortNumberButton.text = `$(ports-open-browser-icon) ${value}`;
                 })
               }else{
-                vscode.window.showErrorMessage('Port Number is not Available');
+                vscode.window.showErrorMessage(i18n.__('errors.portNumberIsNotAvailable'));
               }
             }, 
             (err) => {
@@ -116,7 +120,7 @@ const activate = async (context) => {
             }
           )
         }else{
-          vscode.window.showErrorMessage('Port Number is not Valid');
+          vscode.window.showErrorMessage(i18n.__('errors.portNumberIsNotValid'));
         }
       })
     }
@@ -139,7 +143,7 @@ const getAppUri = () => {
   return vscode.Uri.parse(`http://localhost:${getAppPort()}`);
 }
 
-function isValidPortNumber(num) {
+function isPortNumberValid(num) {
   // Regular expression to check if number is a valid port number
   const regexExp = /^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$/gi;
 

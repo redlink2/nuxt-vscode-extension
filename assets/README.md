@@ -1,1 +1,0 @@
-This folder is used to store images and every other static file the extension may need
