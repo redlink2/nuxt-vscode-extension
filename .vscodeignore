@@ -1,0 +1,9 @@
+.vscode
+.github
+node_modules
+.gitignore
+jsconfig.json
+*.vsix
+webpack.config.dev.js
+webpack.config.js
+*.log

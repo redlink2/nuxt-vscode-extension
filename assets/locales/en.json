@@ -5,7 +5,12 @@
 	"statusBarButtons.openApp.tooltip": "It opens the app in your default browser.",
 	"statusBarButtons.setPortNumber.tooltip": "Click to choose the default Port that the Nuxt App will be served at",
 	"inputBoxes.setPortNumber.prompt": "Choose the Default Port that the Nuxt App will be served at",
-	"inputBoxes.setPortNumber.placeHolder": "type in a valid Port Number",
-    "errors.portNumberIsNotValid" : "Port Number is not Valid",
-    "errors.portNumberIsNotAvailable" : "Port Number is not Available"
+	"inputBoxes.setPortNumber.placeHolder": "Type in a valid Port Number",
+	"inputBoxes.createApp.prompt": "Type in a Name for your App",
+	"inputBoxes.createApp.placeHolder": "Use URL friendly characters for your App, eg: app_name, app-name, appName",
+	"errors.portNumberIsNotValid": "Port Number is not Valid",
+	"errors.portNumberIsNotAvailable": "Port Number is not Available",
+	"errors.appNameIsNotValid": "App Name is not Valid",
+	"openDialogs.createApp.selectDirectory.openLabel": "Create Nuxt App",
+	"openDialogs.createApp.selectDirectory.title": "Nuxt App Directory Selection"
 }

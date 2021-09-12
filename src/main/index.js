@@ -3,10 +3,11 @@ const vscode = require('vscode');
 const hasYarn = require('has-yarn');
 const tcpPortUsed = require('tcp-port-used');
 const path = require('path');
+const fs = require("fs");
 const { I18n } = require('i18n');
 
 //stores the workspace the user is currently working on
-const WORKSPACE_CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
+const CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
 //this will dispose any Nuxt terminals that were opened and not closed before closing vscode
 vscode.window.terminals.filter((terminal) => terminal.name === 'Nuxt').forEach((terminal) => terminal.dispose());
@@ -17,14 +18,13 @@ const activate = async (context) => {
     locales: ['en', 'pt-BR'],
     directory: path.join(context.extensionPath, 'assets', 'locales'),
     defaultLocale: vscode.env.language
-  })
+  });
 
   startDevServerButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 136);
   startDevServerButton.command = 'Nuxt.startDevServer';
   startDevServerButton.text = `$(notebook-execute) ${i18n.__('statusBarButtons.startDevServer.text')}`;
   startDevServerButton.tooltip = i18n.__('statusBarButtons.startDevServer.tooltip');
   context.subscriptions.push(startDevServerButton);
-  startDevServerButton.show();
 
   openAppButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 136);
   openAppButton.command = 'Nuxt.openApp';
@@ -37,7 +37,12 @@ const activate = async (context) => {
   setPortNumberButton.text = `$(ports-open-browser-icon) ${getAppPort()}`;
   setPortNumberButton.tooltip = i18n.__('statusBarButtons.setPortNumber.tooltip');
   context.subscriptions.push(setPortNumberButton);
-  setPortNumberButton.show();
+
+  //because the activation event is now * it is necessary to check if there is a "nuxt.config.js" in the current working directory before showing these buttons
+  if(fs.existsSync(path.join(CWD, 'nuxt.config.js'))){
+    startDevServerButton.show();
+    setPortNumberButton.show();
+  }
 
   context.subscriptions.push(
     vscode.commands.registerCommand('Nuxt.startDevServer', () => {
@@ -67,7 +72,7 @@ const activate = async (context) => {
 
       //we also wait few seconds to let nuxt start before start checking if we should show or hide the "Start Dev" button
       setTimeout(() => {
-        //every 1s we check if the App is still running. If it is not, we show the "Start Dev" button again and hide the "Open App" button
+        //every 1s we check if the App is still running. If it isn't, we show the "Start Dev" button again and hide the "Open App" button
         setInterval(() => {
           tcpPortUsed.check(getAppPort())
           .then(
@@ -102,7 +107,7 @@ const activate = async (context) => {
         placeHolder: i18n.__('inputBoxes.setPortNumber.placeHolder')
       })
       .then((value) => {
-        if(isPortNumberValid(value)){
+        if(value && isPortNumberValid(value)){
           tcpPortUsed.check(parseInt(value))
           .then(
             (inUse) => {
@@ -124,7 +129,40 @@ const activate = async (context) => {
         }
       })
     }
-  )); 
+  ));
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('Nuxt.createApp', () => {
+      vscode.window.showOpenDialog({
+        canSelectFolders: true,
+        canSelectFiles: false,
+        canSelectMany: false,
+        openLabel: i18n.__('openDialogs.createApp.selectDirectory.openLabel'),
+        title: i18n.__('openDialogs.createApp.selectDirectory.title')
+      })
+      .then((directories) => {
+        if(directories){
+          const chosenDirectory = directories[0];
+          vscode.window.showInputBox({
+            prompt: i18n.__('inputBoxes.createApp.prompt'),
+            placeHolder: i18n.__('inputBoxes.createApp.placeHolder')
+          })
+          .then((value) => {
+            if(value && isAppNameValid(value)){
+              terminal = vscode.window.createTerminal({
+                name: 'Nuxt',
+                cwd: chosenDirectory
+              });
+              terminal.show();
+              terminal.sendText(getCreateNuxtAppCommand(value), true);
+            }else{
+              vscode.window.showErrorMessage(i18n.__('errors.appNameIsNotValid'));
+            }
+          })
+        }
+      })
+    }
+  ))
 };
 
 const getWorkspaceConfiguration = () => {
@@ -136,7 +174,11 @@ const getAppPort = () =>{
 }
 
 const getNuxtCommand = () =>{
-  return hasYarn(WORKSPACE_CWD) ? `yarn dev` : `npm run dev`;
+  return hasYarn(CWD) ? `yarn dev` : `npm run dev`;
+}
+
+const getCreateNuxtAppCommand = (appName) => {
+  return `npx create-nuxt-app ${appName}`;
 }
 
 const getAppUri = () => {
@@ -144,10 +186,13 @@ const getAppUri = () => {
 }
 
 function isPortNumberValid(num) {
-  // Regular expression to check if number is a valid port number
   const regexExp = /^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$/gi;
-
   return regexExp.test(num);
+}
+
+function isAppNameValid(appName){
+  const regexExp = /^[a-zA-Z0-9_-]*$/gi;
+  return regexExp.test(appName);
 }
 
 const deactivate = () => {

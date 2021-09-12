@@ -22,6 +22,14 @@ This extension aims to simplify the workflow when coding with Nuxt in VS Code
 
 <img src="https://drive.google.com/uc?id=1LOq7hI5gkVmJaUsReWyEjfAsedkTHSIy"></img>
 
+- Create a Nuxt App
+
+<img src="https://drive.google.com/uc?id=1tXfc0zexyzczs3fs6i9wssXNMyETUZ5y"></img>
+
+## Requirements
+
+- Node >= 12.22.0
+- npm >= 5.2.0 => this version has npx which is used on the "Nuxt: Create App" command
 
 <!-- COMMANDS_START -->
 ## Commands (2)
