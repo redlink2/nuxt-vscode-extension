@@ -7,3 +7,4 @@ jsconfig.json
 webpack.config.dev.js
 webpack.config.js
 *.log
+src
