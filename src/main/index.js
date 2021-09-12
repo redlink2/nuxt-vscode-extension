@@ -1,54 +1,153 @@
 // @ts-nocheck
 const vscode = require('vscode');
 const hasYarn = require('has-yarn');
-const open = require('open');
-const CommandRunner = require('../utilities/command-runner');
-const OutputChannel = require('../utilities/output-channel');
-const PreviewAppWebview = require('./preview-app-webview');
+const tcpPortUsed = require('tcp-port-used');
 
-const nuxtOutputChannel = new OutputChannel('Nuxt');
-const commandRunner = new CommandRunner(nuxtOutputChannel);
-const previewAppWebview = new PreviewAppWebview('App', 'Nuxt.openApp');
-
-//stores the workspace the user currently has open.
+//stores the workspace the user is currently working on
 const WORKSPACE_CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
-//stores messages. We can apply i18n later.
+//stores texts for the vscode ui components. We can apply i18n later.
 const MESSAGES = require('../../assets/messages.json')
+let terminal;
+
+//this will dispose any Nuxt terminals that were opened and not closed before closing vscode
+vscode.window.terminals.filter((terminal) => terminal.name === 'Nuxt').forEach((terminal) => terminal.dispose());
 
 const activate = async (context) => {
-  nuxtOutputChannel.activate(context);
-  previewAppWebview.activate(context);
 
-  statusBarButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-  statusBarButton.command = 'Nuxt.startDevServer';
-  statusBarButton.text = MESSAGES.statusBarButton.startDev.text;
-  statusBarButton.tooltip = MESSAGES.statusBarButton.startDev.tooltip;
-  statusBarButton.show();
+  startDevServerButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+  startDevServerButton.command = 'Nuxt.startDevServer';
+  startDevServerButton.text = `$(notebook-execute) ${MESSAGES.statusBarButtons.startDevServer.text}`;
+  startDevServerButton.tooltip = MESSAGES.statusBarButtons.startDevServer.tooltip;
+  context.subscriptions.push(startDevServerButton);
+  startDevServerButton.show();
 
-  context.subscriptions.push(vscode.commands.registerCommand('Nuxt.startDevServer', () => {
-    if(statusBarButton.text === MESSAGES.statusBarButton.open.text){
-      //need to find a way to get nuxt's current port because some users dont use this one
-      if(vscode.workspace.getConfiguration('nuxt').get('openInTheBrowser')){
-        open(`http://localhost:3000`);
-      }else{
-        vscode.commands.executeCommand("Nuxt.openApp");
+  openAppButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+  openAppButton.command = 'Nuxt.openApp';
+  openAppButton.text = `$(default-view-icon) ${MESSAGES.statusBarButtons.openApp.text}`;
+  openAppButton.tooltip = MESSAGES.statusBarButtons.openApp.tooltip;
+  context.subscriptions.push(openAppButton);
+
+  setPortNumberButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
+  setPortNumberButton.command = 'Nuxt.setPortNumber';
+  setPortNumberButton.text = `$(ports-open-browser-icon) ${getAppPort()}`;
+  setPortNumberButton.tooltip = MESSAGES.statusBarButtons.setPortNumber.tooltip;
+  context.subscriptions.push(setPortNumberButton);
+  setPortNumberButton.show();
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('Nuxt.startDevServer', () => {
+      startDevServerButton.hide();
+      openAppButton.show();
+      
+      terminal = vscode.window.createTerminal({
+        name: 'Nuxt'
+      });
+      terminal.show();
+      
+      switch(process.platform){
+        case 'win32':
+          terminal.sendText(`$env:PORT=${getAppPort()}`, true);
+          break;
+        default:
+          terminal.sendText(`export PORT=${getAppPort()}`, true);
+          break;
       }
-    }else if(statusBarButton.text === MESSAGES.statusBarButton.startDev.text){
-      commandRunner.exec(hasYarn(WORKSPACE_CWD) ? 'yarn dev' : 'npm run dev');
-      statusBarButton.text = MESSAGES.statusBarButton.open.text;
+      terminal.sendText(getNuxtCommand(), true);
+
+      //small delay to open the browser because it can open before nuxt starts
+      //and we also want you to see that a read only terminal has been opened
+      setTimeout(() => {
+        vscode.env.openExternal(getAppUri());
+      }, 2000);
+
+      //we also wait few seconds to let nuxt start before start checking if we should show or hide the "Start Dev" button
+      setTimeout(() => {
+        //every 1s we check if the App is still running. If it is not, we show the "Start Dev" button again and hide the "Open App" button
+        setInterval(() => {
+          tcpPortUsed.check(getAppPort())
+          .then(
+            (inUse) => {
+              if(!inUse){
+                startDevServerButton.show();
+                openAppButton.hide();
+              }else{
+                startDevServerButton.hide();
+                openAppButton.show();
+              }
+            }, 
+            (err) => {
+              console.error('Error on check:', err.message);
+            }
+          );
+        }, 1000);
+      }, 10000);
     }
-    
-    //there is a regression in this line. Previously when we called show(), it would focus on the tab. But it is no longer doing it.
-    //the developer has to manually change it.
-    statusBarButton.show();
-  }));
-	
-	context.subscriptions.push(statusBarButton);
+  ));
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('Nuxt.openApp', () => {
+      vscode.env.openExternal(getAppUri());
+    }
+  )); 
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('Nuxt.setPortNumber', () => {
+      vscode.window.showInputBox({
+        prompt: MESSAGES.inputBoxes.setPortNumber.prompt,
+        placeHolder: MESSAGES.inputBoxes.setPortNumber.placeHolder
+      })
+      .then((value) => {
+        if(isValidPortNumber(value)){
+          tcpPortUsed.check(parseInt(value))
+          .then(
+            (inUse) => {
+              if(!inUse){
+                getWorkspaceConfiguration().update('portNumber', parseInt(value))
+                .then(() => {
+                  setPortNumberButton.text = `$(ports-open-browser-icon) ${value}`;
+                })
+              }else{
+                vscode.window.showErrorMessage('Port Number is not Available');
+              }
+            }, 
+            (err) => {
+              console.error('Error on check:', err.message);
+            }
+          )
+        }else{
+          vscode.window.showErrorMessage('Port Number is not Valid');
+        }
+      })
+    }
+  )); 
 };
 
+const getWorkspaceConfiguration = () => {
+  return vscode.workspace.getConfiguration('nuxt');
+}
+
+const getAppPort = () =>{
+  return getWorkspaceConfiguration().get('portNumber') || 3000;
+}
+
+const getNuxtCommand = () =>{
+  return hasYarn(WORKSPACE_CWD) ? `yarn dev` : `npm run dev`;
+}
+
+const getAppUri = () => {
+  return vscode.Uri.parse(`http://localhost:${getAppPort()}`);
+}
+
+function isValidPortNumber(num) {
+  // Regular expression to check if number is a valid port number
+  const regexExp = /^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$/gi;
+
+  return regexExp.test(num);
+}
+
 const deactivate = () => {
-  previewAppWebview.deactivate();
+  terminal.dispose();
 };
 
 module.exports = {
