@@ -39,6 +39,7 @@ This extension aims to simplify the workflow when coding with Nuxt in VS Code
 |Nuxt.startDevServer|Nuxt: Start Dev Server|
 |Nuxt.openApp|Nuxt: Open App|
 |Nuxt.setPortNumber|Nuxt: Set Port Number|
+|Nuxt.createNuxtApp|Nuxt: Create Nuxt App|
 <!-- COMMANDS_END -->
 
 <!-- SETTINGS_START -->
