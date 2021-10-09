@@ -3,11 +3,11 @@ const hasYarn = require("has-yarn");
 const tcpPortUsed = require("tcp-port-used");
 const path = require("path");
 const fs = require("fs");
-const { I18n } = require("i18n");
+const i18n = require("i18n");
 
 //stores the workspace the user is currently working on
 const CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
-const supportedLocales = ["en", "pt-BR"];
+const NUXT_CONFIG_PATH = path.join(CWD, "nuxt.config.js");
 
 //this will dispose any Nuxt terminals that were opened and not closed before closing vscode
 vscode.window.terminals
@@ -16,14 +16,6 @@ vscode.window.terminals
 let terminal;
 
 const activate = async (context) => {
-  const i18n = new I18n({
-    locales: supportedLocales,
-    directory: path.join(context.extensionPath, "assets", "locales"),
-    defaultLocale: supportedLocales.includes(vscode.env.language)
-      ? vscode.env.language
-      : "en",
-  });
-
   const startDevServerButton = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     136
@@ -60,7 +52,7 @@ const activate = async (context) => {
   context.subscriptions.push(setPortNumberButton);
 
   //because the activation event is now * it is necessary to check if there is a "nuxt.config.js" in the current working directory before showing these buttons
-  if (fs.existsSync(path.join(CWD, "nuxt.config.js"))) {
+  if (fs.existsSync(NUXT_CONFIG_PATH)) {
     startDevServerButton.show();
     setPortNumberButton.show();
   }
