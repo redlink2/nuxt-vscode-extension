@@ -16,8 +16,8 @@ jobs:
           node-version: 12
       - name: Build Extension
         run: |
-         yarn install
-         yarn build:prod
+          yarn install
+          yarn build
       - name: Publish Extension on VS Code Marketplace
         uses: lannonbr/vsce-action@master
         with:

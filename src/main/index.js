@@ -7,6 +7,7 @@ const { I18n } = require("i18n");
 
 //stores the workspace the user is currently working on
 const CWD = vscode.workspace.workspaceFolders[0].uri.fsPath;
+const supportedLocales = ["en", "pt-BR"];
 
 //this will dispose any Nuxt terminals that were opened and not closed before closing vscode
 vscode.window.terminals
@@ -16,9 +17,11 @@ let terminal;
 
 const activate = async (context) => {
   const i18n = new I18n({
-    locales: ["en", "pt-BR"],
+    locales: supportedLocales,
     directory: path.join(context.extensionPath, "assets", "locales"),
-    defaultLocale: vscode.env.language,
+    defaultLocale: supportedLocales.includes(vscode.env.language)
+      ? vscode.env.language
+      : "en",
   });
 
   const startDevServerButton = vscode.window.createStatusBarItem(
