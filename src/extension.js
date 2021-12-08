@@ -17,9 +17,6 @@ const activate = async (context) => {
   });
 
   await nuxt.activate(context);
-  vscode.window.showInformationMessage(
-    i18n.__("informationMessages.nuxtExtensionIsReady")
-  );
 };
 
 const deactivate = () => {
